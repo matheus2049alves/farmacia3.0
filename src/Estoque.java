@@ -4,13 +4,13 @@ import java.util.List;
 public class Estoque {
     List<Product> products = new ArrayList<>();
 
-    public void adicionarProduto(String nome, Double preco, String categoria) {
-        Product produto = new Product(nome, preco, categoria);
-        products.add(produto);
+
+    public void adicionarProduto(Product product) {
+        products.add(product);
     }
 
 
-    public void removerProduto(String nome) {
+    public void removerProduto( String nome) {
         products.removeIf(product -> product.getNome().equals(nome));
     }
 
