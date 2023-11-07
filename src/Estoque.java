@@ -15,7 +15,6 @@ public class Estoque {
     }
 
     public boolean alterarProduto(String nome,Product novoProduto) {
-        //boolean a = false;
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getNome().equals(nome)) {
                 products.set(i, novoProduto);

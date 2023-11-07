@@ -81,6 +81,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
                         String marca = marcaField.getText();
                         estoque.adicionarProduto(new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)));
                     }
+                    JOptionPane.showMessageDialog(null, "Produto adicionado com sucesso!");
                 }
             }
         });
