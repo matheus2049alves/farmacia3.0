@@ -18,6 +18,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
         // Criando botão de diálogo para usuário adicionar um produto
         JButton addProductButton = new JButton("Adicionar Produto");
         addProductButton.addActionListener(e -> {
+
             JTextField nomeField = new JTextField();
             JTextField precoField = new JTextField();
             JTextField categoriaField = new JTextField();
@@ -29,17 +30,17 @@ public class ServiceInterface extends JFrame implements ActionListener {
             JLabel marcaLabel = new JLabel(("Marca"));
 
 
-                if (tipoBox.getSelectedItem().equals("Medicamento")) {
-                    tipoField.setVisible(true);
-                    marcaField.setVisible(false);
-                    marcaLabel.setVisible(false);
-                    tipoLabel.setVisible(true);
-                } else {
-                    tipoField.setVisible(false);
-                    marcaField.setVisible(true);
-                    marcaLabel.setVisible(true);
-                    tipoLabel.setVisible(false);
-                }
+            if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                tipoField.setVisible(true);
+                marcaField.setVisible(false);
+                marcaLabel.setVisible(false);
+                tipoLabel.setVisible(true);
+            } else {
+                tipoField.setVisible(false);
+                marcaField.setVisible(true);
+                marcaLabel.setVisible(true);
+                tipoLabel.setVisible(false);
+            }
 
             Object[] message = {
                     "Nome:", nomeField,
@@ -53,21 +54,35 @@ public class ServiceInterface extends JFrame implements ActionListener {
 
             int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Produto", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
-                String nome = nomeField.getText();
-                Double preco = Double.parseDouble(precoField.getText());
-                String categoria = categoriaField.getText();
-                String nomeFornecedor = nomeForneField.getText();
-                String cnpj = cnpjForneField.getText();
-
-                if (tipoBox.getSelectedItem().equals("Medicamento")) {
-                    String tipo = tipoField.getText();
-                    estoque.adicionarProduto(new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)));
-                } else {
-                    String marca = marcaField.getText();
-                    estoque.adicionarProduto(new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)));
+                boolean certo = true;
+                try {
+                    Double p = Double.parseDouble(precoField.getText());
+                    Long i = Long.parseLong(cnpjForneField.getText());
+                }
+                catch(NumberFormatException n){
+                    JOptionPane.showMessageDialog(null, "CNPJ ou PREÇO com valores não numericos!");
+                    certo = false;
+                }
+                String tam = cnpjForneField.getText();
+                if (tam.length() != 14 && certo){
+                    JOptionPane.showMessageDialog(null, "CNPJ deve ter 14 dígitos!");
+                    certo = false;
+                }
+                if (certo) {
+                    String nome = nomeField.getText();
+                    Double preco = Double.parseDouble(precoField.getText());
+                    String categoria = categoriaField.getText();
+                    String nomeFornecedor = nomeForneField.getText();
+                    String cnpj = cnpjForneField.getText();
+                    if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                        String tipo = tipoField.getText();
+                        estoque.adicionarProduto(new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)));
+                    } else {
+                        String marca = marcaField.getText();
+                        estoque.adicionarProduto(new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)));
+                    }
                 }
             }
-
         });
 
         // Criando botão de diálogo para imprimir todos os produtos
