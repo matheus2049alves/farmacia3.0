@@ -99,8 +99,8 @@ public class ServiceInterface extends JFrame implements ActionListener {
             JTextField marcaField = new JTextField();
             JTextField nomeForneField = new JTextField();
             JTextField cnpjForneField = new JTextField();
-            JLabel tipoLabel = new JLabel("Tipo");
-            JLabel marcaLabel = new JLabel(("Marca"));
+            JLabel tipoLabel = new JLabel("Novo Tipo");
+            JLabel marcaLabel = new JLabel(("Nova Marca"));
 
 
             if (tipoBox.getSelectedItem().equals("Medicamento")) {
@@ -117,29 +117,52 @@ public class ServiceInterface extends JFrame implements ActionListener {
 
             Object[] message = {
                     "Nome Antigo", nomeAntigoField,
-                    "Nome:", nomeField,
-                    "Preço:", precoField,
-                    "Categoria:", categoriaField,
+                    "Novo Nome:", nomeField,
+                    "Novo Preço:", precoField,
+                    "Nova Categoria:", categoriaField,
                     tipoLabel, tipoField,
                     marcaLabel, marcaField,
-                    "Nome fornecedor:", nomeForneField,
-                    "Cnpj Fornecedor:", cnpjForneField,
+                    "Novo fornecedor:", nomeForneField,
+                    "Novo Cnpj Fornecedor:", cnpjForneField,
             };
             int option = JOptionPane.showConfirmDialog(null, message, "Alterar Produto", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
-                String nomeAntigo = nomeAntigoField.getText();
-                String nome = nomeField.getText();
-                Double preco = Double.parseDouble(precoField.getText());
-                String categoria = categoriaField.getText();
-                String nomeFornecedor = nomeForneField.getText();
-                String cnpj = cnpjForneField.getText();
-
-                if (tipoBox.getSelectedItem().equals("Medicamento")) {
-                    String tipo = tipoField.getText();
-                    estoque.alterarProduto(nomeAntigo,new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)));
-                } else {
-                    String marca = marcaField.getText();
-                    estoque.alterarProduto(nomeAntigo,new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)));
+                boolean certo = true;
+                try {
+                    Double p = Double.parseDouble(precoField.getText());
+                    Long i = Long.parseLong(cnpjForneField.getText());
+                }
+                catch(NumberFormatException n){
+                    JOptionPane.showMessageDialog(null, "CNPJ ou PREÇO com valores não numericos!");
+                    certo = false;
+                }
+                String tam = cnpjForneField.getText();
+                if (tam.length() != 14 && certo){
+                    JOptionPane.showMessageDialog(null, "CNPJ deve ter 14 dígitos!");
+                    certo = false;
+                }
+                if (certo) {
+                    String nomeAntigo = nomeAntigoField.getText();
+                    String nome = nomeField.getText();
+                    Double preco = Double.parseDouble(precoField.getText());
+                    String categoria = categoriaField.getText();
+                    String nomeFornecedor = nomeForneField.getText();
+                    String cnpj = cnpjForneField.getText();
+                    if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                        String tipo = tipoField.getText();
+                        if (estoque.alterarProduto(nomeAntigo,new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)))){
+                            JOptionPane.showMessageDialog(null, "Produto alterado com sucesso!");
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Produto não encontrado");
+                        }
+                    } else {
+                        String marca = marcaField.getText();
+                        if (estoque.alterarProduto(nomeAntigo,new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)))){
+                            JOptionPane.showMessageDialog(null, "Produto alterado com sucesso!");
+                        }else {
+                            JOptionPane.showMessageDialog(null, "Produto não encontrado");
+                        }
+                    }
                 }
             }
 
@@ -151,7 +174,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
             JTextField nomeField = new JTextField();
 
             Object[] message = {"Nome", nomeField,};
-            int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Produto", JOptionPane.OK_CANCEL_OPTION);
+            int option = JOptionPane.showConfirmDialog(null, message, "Apagar Produto", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 String nomeAntigo = nomeField.getText();
                 if (estoque.excluirProduto(nomeAntigo) == 1)
