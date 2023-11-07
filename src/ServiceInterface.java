@@ -10,6 +10,9 @@ public class ServiceInterface extends JFrame implements ActionListener {
 
     public  ServiceInterface () {
         setTitle("Farmácia Art3mis");
+        //ImageIcon logoIcon = new ImageIcon("logo3.png");
+        //JLabel ImageLabel = new JLabel(logoIcon);
+        getContentPane().setBackground(Color.LIGHT_GRAY);
         String[] opcoesProdutos = {"Medicamento", "Produtos Gerais"};
         JComboBox<String> tipoBox = new JComboBox<>(opcoesProdutos);
         // Criando botão de diálogo para usuário adicionar um produto
@@ -22,26 +25,30 @@ public class ServiceInterface extends JFrame implements ActionListener {
             JTextField marcaField = new JTextField();
             JTextField nomeForneField = new JTextField();
             JTextField cnpjForneField = new JTextField();
+            JLabel tipoLabel = new JLabel("Tipo");
+            JLabel marcaLabel = new JLabel(("Marca"));
 
 
-
-            tipoBox.addActionListener(event -> {
                 if (tipoBox.getSelectedItem().equals("Medicamento")) {
                     tipoField.setVisible(true);
                     marcaField.setVisible(false);
+                    marcaLabel.setVisible(false);
+                    tipoLabel.setVisible(true);
                 } else {
                     tipoField.setVisible(false);
                     marcaField.setVisible(true);
+                    marcaLabel.setVisible(true);
+                    tipoLabel.setVisible(false);
                 }
-            });
+
             Object[] message = {
                     "Nome:", nomeField,
                     "Preço:", precoField,
                     "Categoria:", categoriaField,
-                    "Tipo:", tipoField,
-                    "Marca", marcaField,
+                    tipoLabel, tipoField,
+                    marcaLabel, marcaField,
                     "Nome fornecedor:", nomeForneField,
-                    "Cnpj Fornecedor:", cnpjForneField
+                    "Cnpj Fornecedor:", cnpjForneField,
             };
 
             int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Produto", JOptionPane.OK_CANCEL_OPTION);
@@ -67,22 +74,100 @@ public class ServiceInterface extends JFrame implements ActionListener {
         JButton showProductsButton = new JButton("Mostrar Produtos");
         showProductsButton.addActionListener(e -> mostrarProdutos());
 
+        JButton alterarButton = new JButton("Alterar Produto");
+        alterarButton.addActionListener(e -> {
+            JTextField nomeAntigoField = new JTextField();
+            JTextField nomeField = new JTextField();
+            JTextField precoField = new JTextField();
+            JTextField categoriaField = new JTextField();
+            JTextField tipoField = new JTextField();
+            JTextField marcaField = new JTextField();
+            JTextField nomeForneField = new JTextField();
+            JTextField cnpjForneField = new JTextField();
+            JLabel tipoLabel = new JLabel("Tipo");
+            JLabel marcaLabel = new JLabel(("Marca"));
+
+
+            if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                tipoField.setVisible(true);
+                marcaField.setVisible(false);
+                marcaLabel.setVisible(false);
+                tipoLabel.setVisible(true);
+            } else {
+                tipoField.setVisible(false);
+                marcaField.setVisible(true);
+                marcaLabel.setVisible(true);
+                tipoLabel.setVisible(false);
+            }
+
+            Object[] message = {
+                    "Nome Antigo", nomeAntigoField,
+                    "Nome:", nomeField,
+                    "Preço:", precoField,
+                    "Categoria:", categoriaField,
+                    tipoLabel, tipoField,
+                    marcaLabel, marcaField,
+                    "Nome fornecedor:", nomeForneField,
+                    "Cnpj Fornecedor:", cnpjForneField,
+            };
+            int option = JOptionPane.showConfirmDialog(null, message, "Alterar Produto", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                String nomeAntigo = nomeAntigoField.getText();
+                String nome = nomeField.getText();
+                Double preco = Double.parseDouble(precoField.getText());
+                String categoria = categoriaField.getText();
+                String nomeFornecedor = nomeForneField.getText();
+                String cnpj = cnpjForneField.getText();
+
+                if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                    String tipo = tipoField.getText();
+                    estoque.alterarProduto(nomeAntigo,new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)));
+                } else {
+                    String marca = marcaField.getText();
+                    estoque.alterarProduto(nomeAntigo,new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)));
+                }
+            }
+
+
+        });
+
+        JButton apagarButton = new JButton("Apagar Produto");
+        apagarButton.addActionListener(e -> {
+            JTextField nomeField = new JTextField();
+
+            Object[] message = {"Nome", nomeField,};
+            int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Produto", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                String nomeAntigo = nomeField.getText();
+                if (estoque.excluirProduto(nomeAntigo) == 1)
+                    JOptionPane.showMessageDialog(null, "Apagado com sucessor!");
+                else{
+                    JOptionPane.showMessageDialog(null, "Produto não Encontrado!");
+                }
+            }
+        });
+
+
+
         setLayout(new FlowLayout());
         setSize(400, 500);
+        setLocationRelativeTo(null);
         add(addProductButton);
         add(showProductsButton);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        //add(ImageLabel,BorderLayout.NORTH);
+        add(alterarButton);
         add(tipoBox);
+        add(apagarButton);
 
 
          //Método para mostrar os produtos em uma nova janela
 
         }
-
     public void mostrarProdutos () {
-        JFrame frame = new JFrame("Produtos");
-        String[] columnNames = {"Nome do Produto", "Preço", "Categoria", "Tipo", "Nome Fornecedor", "CNPJ"};
+        JFrame frame = new JFrame();
+        String [] columnNames = {"Nome Produto","Preço Produto","Categoria Produto","Tipo/Marca","Nome Fornecedor","Cnpj"};
         String[][] data = new String[estoque.getProdutos().size()][6];
         for (int i = 0; i < estoque.getProdutos().size(); i++) {
             Product produto = estoque.getProdutos().get(i);

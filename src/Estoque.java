@@ -14,12 +14,20 @@ public class Estoque {
         products.removeIf(product -> product.getNome().equals(nome));
     }
 
-    public void alterarProduto(String nomeAntigo, String nomeNovo) {
-        for (Product produto : products) {
-            if (produto.getNome().equals(nomeAntigo)) {
-                produto.setNome(nomeNovo);
+    public void alterarProduto(String nome,Product novoProduto) {
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getNome().equals(nome)) {
+                products.set(i, novoProduto);
                 break;
             }
+        }
+    }
+
+    public int excluirProduto(String nome) {
+        if(products.removeIf(product -> product.getNome().equals(nome)))
+            return 1;
+        else{
+            return 0;
         }
     }
 
