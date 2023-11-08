@@ -1,3 +1,5 @@
+package entities;
+
 public class Fornecedor {
     private String nome;
     private String cnpj;

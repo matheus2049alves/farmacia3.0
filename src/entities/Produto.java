@@ -1,4 +1,8 @@
-public class Product {
+package entities;
+
+import entities.Fornecedor;
+
+public class Produto {
   private String nome;
   private  Double preco;
   private  String Categoria;
@@ -6,14 +10,14 @@ public class Product {
   private Fornecedor fornecedor;
 
 
-    public Product(String nome, Double preco, String categoria, Fornecedor fornecedor) {
+    public Produto(String nome, Double preco, String categoria, Fornecedor fornecedor) {
         this.nome = nome;
         this.preco = preco;
         Categoria = categoria;
         this.fornecedor = fornecedor;
     }
 
-    public Product(String nome) {
+    public Produto(String nome) {
         this.nome = nome;
     }
 

@@ -1,17 +1,19 @@
-
+package view;
+import entities.Medicamento;
+import entities.Produto;
+import entities.ProdutoGeral;
+import domain.Estoque;
+import entities.Fornecedor;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class ServiceInterface extends JFrame implements ActionListener {
+public class InterfaceGraf extends JFrame  {
     Estoque estoque = new Estoque();
     JTextArea textArea = new JTextArea();
 
-    public  ServiceInterface () {
+    public InterfaceGraf() {
         setTitle("Farmácia Art3mis");
-        //ImageIcon logoIcon = new ImageIcon("logo3.png");
-        //JLabel ImageLabel = new JLabel(logoIcon);
+
         getContentPane().setBackground(Color.LIGHT_GRAY);
         String[] opcoesProdutos = {"Medicamento", "Produtos Gerais"};
         JComboBox<String> tipoBox = new JComboBox<>(opcoesProdutos);
@@ -87,9 +89,10 @@ public class ServiceInterface extends JFrame implements ActionListener {
         });
 
         // Criando botão de diálogo para imprimir todos os produtos
-        JButton showProductsButton = new JButton("Mostrar Produtos");
-        showProductsButton.addActionListener(e -> mostrarProdutos());
+        JButton mostraProdutosButton = new JButton("Mostrar Produtos");
+        mostraProdutosButton.addActionListener(e -> estoque.mostrarProdutos());
 
+        //crinado botão e evento para alterar produtos
         JButton alterarButton = new JButton("Alterar Produto");
         alterarButton.addActionListener(e -> {
             JTextField nomeAntigoField = new JTextField();
@@ -149,7 +152,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
                     String categoria = categoriaField.getText();
                     String nomeFornecedor = nomeForneField.getText();
                     String cnpj = cnpjForneField.getText();
-                    if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                    if (tipoBox.getSelectedItem().equals("entities.Medicamento")) {
                         String tipo = tipoField.getText();
                         if (estoque.alterarProduto(nomeAntigo,new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)))){
                             JOptionPane.showMessageDialog(null, "Produto alterado com sucesso!");
@@ -170,6 +173,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
 
         });
 
+        //criando botão e evento para apagar produto
         JButton apagarButton = new JButton("Apagar Produto");
         apagarButton.addActionListener(e -> {
             JTextField nomeField = new JTextField();
@@ -187,50 +191,17 @@ public class ServiceInterface extends JFrame implements ActionListener {
         });
 
 
-
+        //configurações de janela
         setLayout(new FlowLayout());
         setSize(400, 500);
         setLocationRelativeTo(null);
         add(addProductButton);
-        add(showProductsButton);
+        add(mostraProdutosButton);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        //add(ImageLabel,BorderLayout.NORTH);
         add(alterarButton);
         add(tipoBox);
         add(apagarButton);
 
-
-         //Método para mostrar os produtos em uma nova janela
-
         }
-    public void mostrarProdutos () {
-        JFrame frame = new JFrame();
-        String [] columnNames = {"Nome Produto","Preço Produto","Categoria Produto","Tipo/Marca","Nome Fornecedor","Cnpj"};
-        String[][] data = new String[estoque.getProdutos().size()][6];
-        for (int i = 0; i < estoque.getProdutos().size(); i++) {
-            Product produto = estoque.getProdutos().get(i);
-            data[i][0] = produto.getNome();
-            data[i][1] = String.valueOf(produto.getPreco());
-            data[i][2] = produto.getCategoria();
-            if (produto instanceof Medicamento) {
-                data[i][3] = ((Medicamento) produto).getTipo();
-            } else if (produto instanceof  ProdutoGeral) {
-                data[i][3]= ((ProdutoGeral) produto).marca;
-            }
 
-            data[i][4] = produto.getFornecedor().getNome();
-            data[i][5] = produto.getFornecedor().getCnpj();
-        }
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
-        frame.add(scrollPane);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
 }
