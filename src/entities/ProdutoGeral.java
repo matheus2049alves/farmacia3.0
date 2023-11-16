@@ -1,5 +1,10 @@
-public class ProdutoGeral extends Product {
-    String marca;
+package entities;
+
+import entities.Produto;
+import entities.Fornecedor;
+
+public class ProdutoGeral extends Produto {
+    public String marca;
 
     public ProdutoGeral(String nome, Double preco, String categoria, String marca, Fornecedor fornecedor) {
         super(nome, preco, categoria, fornecedor);

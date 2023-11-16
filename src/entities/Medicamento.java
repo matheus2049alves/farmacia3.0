@@ -1,4 +1,6 @@
-public class Medicamento extends Product {
+package entities;
+
+public class Medicamento extends Produto {
       public String tipo;
 
 

@@ -1,24 +1,26 @@
-
+package view;
+import entities.Medicamento;
+import entities.Produto;
+import entities.ProdutoGeral;
+import domain.Estoque;
+import entities.Fornecedor;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class ServiceInterface extends JFrame implements ActionListener {
+public class InterfaceGraf extends JFrame  {
     Estoque estoque = new Estoque();
     JTextArea textArea = new JTextArea();
 
-    public  ServiceInterface () {
+    public InterfaceGraf() {
         setTitle("Farmácia Art3mis");
-        //ImageIcon logoIcon = new ImageIcon("logo3.png");
-        //JLabel ImageLabel = new JLabel(logoIcon);
+
         getContentPane().setBackground(Color.LIGHT_GRAY);
         String[] opcoesProdutos = {"Medicamento", "Produtos Gerais"};
         JComboBox<String> tipoBox = new JComboBox<>(opcoesProdutos);
         // Criando botão de diálogo para usuário adicionar um produto
         JButton addProductButton = new JButton("Adicionar Produto");
         addProductButton.addActionListener(e -> {
-
+            // Cria campos de entrada de dados e rótulos para os atributos do produto.
             JTextField nomeField = new JTextField();
             JTextField precoField = new JTextField();
             JTextField categoriaField = new JTextField();
@@ -29,7 +31,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
             JLabel tipoLabel = new JLabel("Tipo");
             JLabel marcaLabel = new JLabel(("Marca"));
 
-
+            // Verifica o tipo selecionado no combobox e ajusta a visibilidade dos campos de acordo com o tipo de produto.
             if (tipoBox.getSelectedItem().equals("Medicamento")) {
                 tipoField.setVisible(true);
                 marcaField.setVisible(false);
@@ -41,7 +43,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
                 marcaLabel.setVisible(true);
                 tipoLabel.setVisible(false);
             }
-
+            // Cria um array de objetos para exibir no diálogo de entrada de dados.
             Object[] message = {
                     "Nome:", nomeField,
                     "Preço:", precoField,
@@ -51,29 +53,35 @@ public class ServiceInterface extends JFrame implements ActionListener {
                     "Nome fornecedor:", nomeForneField,
                     "Cnpj Fornecedor:", cnpjForneField,
             };
-
+            // Exibe um diálogo de confirmação com os campos de entrada de dados.
             int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Produto", JOptionPane.OK_CANCEL_OPTION);
+            // Se o usuário confirmar a adição do produto:
             if (option == JOptionPane.OK_OPTION) {
                 boolean certo = true;
                 try {
+                    // Tenta converter o conteúdo dos campos 'precoField' e 'cnpjForneField' em números.
                     Double p = Double.parseDouble(precoField.getText());
                     Long i = Long.parseLong(cnpjForneField.getText());
                 }
                 catch(NumberFormatException n){
+                    // Se ocorrer uma exceção de conversão, exibe uma mensagem de erro.
                     JOptionPane.showMessageDialog(null, "CNPJ ou PREÇO com valores não numericos!");
                     certo = false;
                 }
                 String tam = cnpjForneField.getText();
+                // Verifica se o CNPJ tem 14 dígitos e se nenhum erro ocorreu até este ponto.
                 if (tam.length() != 14 && certo){
                     JOptionPane.showMessageDialog(null, "CNPJ deve ter 14 dígitos!");
                     certo = false;
                 }
                 if (certo) {
+                    // Coleta informações inseridas nos campos.
                     String nome = nomeField.getText();
                     Double preco = Double.parseDouble(precoField.getText());
                     String categoria = categoriaField.getText();
                     String nomeFornecedor = nomeForneField.getText();
                     String cnpj = cnpjForneField.getText();
+                    // Com base no tipo de produto selecionado, cria e adiciona o produto ao estoque.
                     if (tipoBox.getSelectedItem().equals("Medicamento")) {
                         String tipo = tipoField.getText();
                         estoque.adicionarProduto(new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)));
@@ -87,8 +95,10 @@ public class ServiceInterface extends JFrame implements ActionListener {
         });
 
         // Criando botão de diálogo para imprimir todos os produtos
-        JButton showProductsButton = new JButton("Mostrar Produtos");
-        showProductsButton.addActionListener(e -> mostrarProdutos());
+        JButton mostraProdutosButton = new JButton("Mostrar Produtos");
+        mostraProdutosButton.addActionListener(e -> estoque.mostrarProdutos());
+
+        //criando botão e evento para alterar produtos----
 
         JButton alterarButton = new JButton("Alterar Produto");
         alterarButton.addActionListener(e -> {
@@ -103,7 +113,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
             JLabel tipoLabel = new JLabel("Novo Tipo");
             JLabel marcaLabel = new JLabel(("Nova Marca"));
 
-
+            //configuração da visibilidade dos atributos Marca e tipo
             if (tipoBox.getSelectedItem().equals("Medicamento")) {
                 tipoField.setVisible(true);
                 marcaField.setVisible(false);
@@ -126,7 +136,10 @@ public class ServiceInterface extends JFrame implements ActionListener {
                     "Novo fornecedor:", nomeForneField,
                     "Novo Cnpj Fornecedor:", cnpjForneField,
             };
+            //
             int option = JOptionPane.showConfirmDialog(null, message, "Alterar Produto", JOptionPane.OK_CANCEL_OPTION);
+            /* Exibe um diálogo de confirmação e aguarda a resposta do usuário.
+            A variável 'option' irá conter o valor da escolha (OK ou CANCEL)*/
             if (option == JOptionPane.OK_OPTION) {
                 boolean certo = true;
                 try {
@@ -138,6 +151,7 @@ public class ServiceInterface extends JFrame implements ActionListener {
                     certo = false;
                 }
                 String tam = cnpjForneField.getText();
+                // Verifica se o tamanho do CNPJ é diferente de 14 e se nenhum erro ocorreu anteriormente.
                 if (tam.length() != 14 && certo){
                     JOptionPane.showMessageDialog(null, "CNPJ deve ter 14 dígitos!");
                     certo = false;
@@ -149,16 +163,19 @@ public class ServiceInterface extends JFrame implements ActionListener {
                     String categoria = categoriaField.getText();
                     String nomeFornecedor = nomeForneField.getText();
                     String cnpj = cnpjForneField.getText();
+                    /* Verifica o tipo do produto (Medicamento ou Produto Geral) selecionado no combobox.
+                    e altera o produto com base nessa seleção, chamando os métódos de cada tipo de produto
+                    para alteração*/
                     if (tipoBox.getSelectedItem().equals("Medicamento")) {
                         String tipo = tipoField.getText();
-                        if (estoque.alterarProduto(nomeAntigo,new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)))){
+                        if (estoque.alteraMedicamento(nomeAntigo,new Medicamento(nome, preco, categoria, tipo, new Fornecedor(nomeFornecedor, cnpj)))){
                             JOptionPane.showMessageDialog(null, "Produto alterado com sucesso!");
                         }else{
                             JOptionPane.showMessageDialog(null, "Produto não encontrado");
                         }
                     } else {
                         String marca = marcaField.getText();
-                        if (estoque.alterarProduto(nomeAntigo,new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)))){
+                        if (estoque.alteraProdutoG(nomeAntigo,new ProdutoGeral(nome, preco, categoria, marca, new Fornecedor(nomeFornecedor, cnpj)))){
                             JOptionPane.showMessageDialog(null, "Produto alterado com sucesso!");
                         }else {
                             JOptionPane.showMessageDialog(null, "Produto não encontrado");
@@ -170,6 +187,9 @@ public class ServiceInterface extends JFrame implements ActionListener {
 
         });
 
+        /*---criando botão e evento para apagar produto------
+        * O precosso leva em conta a seleção da Jcombo box, se estiver selecionado medicamento, irá apagar medicaemnto,
+        * caso contrario, irá apagar produto geral*/
         JButton apagarButton = new JButton("Apagar Produto");
         apagarButton.addActionListener(e -> {
             JTextField nomeField = new JTextField();
@@ -178,59 +198,34 @@ public class ServiceInterface extends JFrame implements ActionListener {
             int option = JOptionPane.showConfirmDialog(null, message, "Apagar Produto", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 String nomeAntigo = nomeField.getText();
-                if (estoque.excluirProduto(nomeAntigo) == 1)
-                    JOptionPane.showMessageDialog(null, "Apagado com sucessor!");
+                if (tipoBox.getSelectedItem().equals("Medicamento")) {
+                    if (estoque.apagarMedicamento(nomeAntigo))
+                        JOptionPane.showMessageDialog(null, "Apagado com sucessor!");
+                    else {
+                        JOptionPane.showMessageDialog(null, "Produto não Encontrado!");
+                    }
+                }
                 else{
-                    JOptionPane.showMessageDialog(null, "Produto não Encontrado!");
+                    if (estoque.apagarProdutoG(nomeAntigo))
+                        JOptionPane.showMessageDialog(null, "Apagado com sucessor!");
+                    else {
+                        JOptionPane.showMessageDialog(null, "Produto não Encontrado!");
+                    }
                 }
             }
         });
 
-
-
+        //configurações de janela
         setLayout(new FlowLayout());
         setSize(400, 500);
         setLocationRelativeTo(null);
         add(addProductButton);
-        add(showProductsButton);
+        add(mostraProdutosButton);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        //add(ImageLabel,BorderLayout.NORTH);
         add(alterarButton);
         add(tipoBox);
         add(apagarButton);
 
-
-         //Método para mostrar os produtos em uma nova janela
-
         }
-    public void mostrarProdutos () {
-        JFrame frame = new JFrame();
-        String [] columnNames = {"Nome Produto","Preço Produto","Categoria Produto","Tipo/Marca","Nome Fornecedor","Cnpj"};
-        String[][] data = new String[estoque.getProdutos().size()][6];
-        for (int i = 0; i < estoque.getProdutos().size(); i++) {
-            Product produto = estoque.getProdutos().get(i);
-            data[i][0] = produto.getNome();
-            data[i][1] = String.valueOf(produto.getPreco());
-            data[i][2] = produto.getCategoria();
-            if (produto instanceof Medicamento) {
-                data[i][3] = ((Medicamento) produto).getTipo();
-            } else if (produto instanceof  ProdutoGeral) {
-                data[i][3]= ((ProdutoGeral) produto).marca;
-            }
 
-            data[i][4] = produto.getFornecedor().getNome();
-            data[i][5] = produto.getFornecedor().getCnpj();
-        }
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
-        frame.add(scrollPane);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
 }
